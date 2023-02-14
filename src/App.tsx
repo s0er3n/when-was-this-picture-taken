@@ -12,7 +12,7 @@ let [result, setResult] = createSignal(0)
 const App: Component = () => {
   let initWS = () => {
     let streamer = "mousewithbeer"
-    let socket = new WebSocket(`ws://localhost:3030/ws/${streamer}`)
+    let socket = new WebSocket(`wss://whenwasthisphototakencom-production.up.railway.app/ws/${streamer}`)
 
     socket.onmessage = (e) => {
       // console.log(e.data)
