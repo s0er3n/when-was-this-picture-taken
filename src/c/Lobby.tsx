@@ -23,7 +23,7 @@ const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) 
   let socket: any;
 
   let initWS = () => {
-    socket = new WebSocket(`ws://localhost:3030/ws/${streamer}`)
+    socket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}/ws/${streamer}`)
 
     socket.onmessage = (e) => {
       // console.log(e.data)
