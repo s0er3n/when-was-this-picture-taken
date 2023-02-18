@@ -1,69 +1,61 @@
 import { Component, createSignal, Show, For } from 'solid-js';
+import Lobby from './c/Lobby';
 
-import logo from './logo.svg';
-import styles from './App.module.css';
-import Chart, { setData } from './c/Chart';
-import Image from './c/Image';
-
-let [image, setImage] = createSignal("");
-let [state, setState] = createSignal("image")
-let [results, setResults] = createSignal([])
-let [result, setResult] = createSignal(0)
 const App: Component = () => {
-  let initWS = () => {
-    let streamer = "mousewithbeer"
-    let socket = new WebSocket(`wss://whenwasthisphototakencom-production.up.railway.app/ws/${streamer}`)
 
-    socket.onmessage = (e) => {
-      // console.log(e.data)
-      const data = JSON.parse(e.data)
-      if (data.Image) {
-        setState("image")
-        console.log(data.Image)
+  let [userName, setUserName] = createSignal("");
+  let [isUserName, setIsUserName] = createSignal(false);
 
-        setImage(data.Image.url)
-        setData(data.Image.guesses)
-      }
-      if (data.AfterImage) {
-        setState("afterImage")
-        setImage(data.AfterImage.url)
-        setData(data.AfterImage.guesses)
-        setResults(data.AfterImage.scores)
-        setResult(data.AfterImage.result)
-      }
-      if (data.Results) {
-        setState("results")
-        setResults(data.Results.scores)
-
-      }
-    }
-    socket.onclose = () => {
-      initWS()
-    }
-  }
-  initWS()
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  let room = urlParams.get("room") ?? ""
   return (
-    <><div
-      class="p-5"
-    >
-      <Show when={state() !== "results"}>
-        <div class="flex flex-col justify-center items-center">
-          <a href="/"><h1 class="text-4xl">WhenWasThisPhotoTaken.com</h1></a>
-          <Image src={image} />
+    <>
+      <Show when={isUserName()} fallback={
+        <div class="flex flex-col items-center justify-center h-screen">
+          <div class="p-12">set user name: <input onChange={(e: any) => setUserName(e.target.value)} class="input input-bordered" /></div>
+          <div class="flex flex-col space-y-2">
+            <Show when={room}>
+              <button
+                class="btn btn-primary"
+                onClick={() => {
+                  // check if valid
+                  setIsUserName(true)
+                }}
+              >join room: {room}</button>
+            </Show>
+            <button
+              class="btn "
+              onClick={() => {
+                // check if valid
+                room = "public"
+                setIsUserName(true)
+              }}
+            >join public lobby</button>
+            <button
+              class="btn "
+              onClick={() => {
+                // check if valid
+                room = userName().toLowerCase()
+                setIsUserName(true)
+              }}
+            >join twitch channel (your name needs to be the same as the twitch channel)</button>
+            <button
+              class="btn "
+              onClick={() => {
+                // check if valid
+                room = self.crypto.randomUUID()
+                setIsUserName(true)
+              }}
+            >create private room</button>
+          </div>
         </div>
-        <div><Chart /></div>
+
+      }>
+        <Lobby room={room} user_name={userName} />
       </Show>
-      <Show when={state() === "afterImage" || state() === "results"}>
-        <Show when={state() === "afterImage"} >
-          Correct Result: {result()}
-        </Show>
-        <For each={results().sort((a, b) => b[1] - a[1])}>{(r, i) =>
-          <li>
-            {i() + 1}: {r[0]} {Math.floor(r[1])}
-          </li>
-        }</For>
-      </Show>
-    </div></>
+
+    </>
 
   );
 };

@@ -7,7 +7,7 @@ const ImageComponent: Component<{ src: Accessor<string>; }> = (props) => {
   return (<>
 
 
-    <img class="w-1/2" src={props.src()} />
+    <img class="h-[500px]" src={props.src()} />
 
   </>
   );
