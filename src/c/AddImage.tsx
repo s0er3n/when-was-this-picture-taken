@@ -10,7 +10,11 @@ const AddImage: Component = () => {
   async function submitForm() {
     if (form().url?.length && form().year && form().description && consent()) {
       try {
-        let result = await fetch("https://backend.whenwasthisphototaken.com/image", { method: "POST" });
+        let result = await fetch("https://backend.whenwasthisphototaken.com/image", {
+          method: "POST",
+          body: JSON.stringify(form()),
+          headers: { "Content-type": "application/json; charset=UTF-8" }
+        },);
         if (result.ok) {
           alert("great success (thank you for adding an image <3)")
         }
