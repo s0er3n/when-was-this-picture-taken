@@ -1,6 +1,6 @@
 import { Component, createSignal } from "solid-js"
 
-type Form = { url?: string, description?: string, year?: string, tags?: string }
+type Form = { url?: string, description?: string, year?: number, tags?: string }
 
 let [form, setForm] = createSignal<Form>({})
 let [consent, setConsent] = createSignal(false)
@@ -9,14 +9,17 @@ const AddImage: Component = () => {
 
   async function submitForm() {
     if (form().url?.length && form().year && form().description && consent()) {
+      let data = form()
+      data.year = Number(data.year)
       try {
-        let result = await fetch("https://backend.whenwasthisphototaken.com/image", {
+        let result = await fetch(`${import.meta.env.VITE_BACKEND_UPLOAD_URL}/image`, {
           method: "POST",
           body: JSON.stringify(form()),
           headers: { "Content-type": "application/json; charset=UTF-8" }
         },);
         if (result.ok) {
           alert("great success (thank you for adding an image <3)")
+          setForm({})
         }
       } catch (e) {
         alert(e)

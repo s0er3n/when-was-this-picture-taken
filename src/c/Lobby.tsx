@@ -1,5 +1,5 @@
 
-import { Component, createSignal, Show, For, Accessor } from 'solid-js';
+import { Component, createSignal, Show, For, Accessor, onCleanup } from 'solid-js';
 
 import Chart, { setData } from './Chart';
 import Image from './Image';
@@ -9,8 +9,15 @@ let [state, setState] = createSignal("image")
 let [results, setResults] = createSignal([])
 let [result, setResult] = createSignal(0)
 let [guess, setGuess] = createSignal();
+let [timer, setTimer] = createSignal<number>()
 
 const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) => {
+
+  let interval = setInterval(() => {
+    if (timer()) {
+      setTimer(timer() - 1)
+    }
+  }, 1000)
   let streamer = "soeren_______"
 
 
@@ -29,6 +36,9 @@ const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) 
       // console.log(e.data)
       const data = JSON.parse(e.data)
       if (data.Image) {
+        if (state() !== "image") {
+          setTimer(40)
+        }
         setState("image")
         console.log(data.Image)
 
@@ -36,6 +46,9 @@ const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) 
         setData(data.Image.guesses)
       }
       if (data.AfterImage) {
+        if (state() !== "afterImage") {
+          setTimer(5)
+        }
         setState("afterImage")
         setGuess(undefined);
         setImage(data.AfterImage.url)
@@ -44,6 +57,9 @@ const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) 
         setResult(data.AfterImage.result)
       }
       if (data.Results) {
+        if (state() !== "results") {
+          setTimer(30)
+        }
         setState("results")
         setResults(data.Results.scores)
 
@@ -54,10 +70,12 @@ const Lobby: Component<{ user_name: Accessor<string>, room: string }> = (props) 
     }
   }
   initWS()
+  onCleanup(() => clearInterval(interval))
   return (
     <><div
       class="p-5"
     >
+      <div>Timer: {timer()}</div>
       <Show when={state() !== "results"}>
         <div class="flex flex-col justify-center items-center">
           <a href="/"><h1 class="text-4xl">WhenWasThisPhotoTaken.com</h1></a>

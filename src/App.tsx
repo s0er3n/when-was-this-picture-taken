@@ -6,7 +6,7 @@ const App: Component = () => {
 
   let [userName, setUserName] = createSignal("");
   let [isUserName, setIsUserName] = createSignal(false);
-  let [state, setState] = createSignal("normal")
+  let [state, setState] = createSignal("add_image")
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -66,12 +66,17 @@ const App: Component = () => {
           </div>
         </Match>
         <Match when={state() === "add_image"} >
-          <AddImage />
-          <div class='flex w-full fixed bottom-0 justify-center'>
-            <button onClick={() => {
-              setState("normal")
-            }}>back</button>
+
+          <div class='w-full flex justify-center mb-28'>
+            <span class='text-6xl font-bold'>I need more images before going live </span>
           </div>
+          <AddImage />
+
+          {/* <div class='flex w-full fixed bottom-0 justify-center'> */}
+          {/*   <button onClick={() => { */}
+          {/*     setState("normal") */}
+          {/*   }}>back</button> */}
+          {/* </div> */}
         </Match>
       </Switch>
 
