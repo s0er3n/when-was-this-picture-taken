@@ -49,25 +49,25 @@ const AddImage: Component = () => {
           <span class="label-text">Describe the Image:</span>
           <span class="label-text-alt">description</span>
         </label>
-        <textarea value={form()?.description} onChange={(e) => setKeyInForm("description", e)} placeholder="King and Queen of Italy in a car..." class="input input-bordered w-full max-w-xs" />
+        <textarea value={form()?.description ?? ""} onChange={(e) => setKeyInForm("description", e)} placeholder="King and Queen of Italy in a car..." class="input input-bordered w-full max-w-xs" />
       </div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
           <span class="label-text">Paste the direct link to the Image:</span>
         </label>
-        <input value={form()?.url} onChange={(e) => setKeyInForm("url", e)} type="url" placeholder="https://i.imgur.com/msslnkG.jpeg" class="input input-bordered w-full max-w-xs" />
+        <input value={form()?.url ?? ""} onChange={(e) => setKeyInForm("url", e)} type="url" placeholder="https://i.imgur.com/msslnkG.jpeg" class="input input-bordered w-full max-w-xs" />
       </div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
           <span class="label-text">In what year was the photo taken?</span>
         </label>
-        <input value={form()?.year} onChange={(e) => setKeyInForm("year", e)} type="number" minLength="4" maxlength="4" placeholder="1950" class="input input-bordered w-full max-w-xs" />
+        <input value={form()?.year ?? ""} onChange={(e) => setKeyInForm("year", e)} type="number" minLength="4" maxlength="4" placeholder="1950" class="input input-bordered w-full max-w-xs" />
       </div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
           <span class="label-text">Write some tags:</span>
         </label>
-        <input value={form()?.tags} onChange={(e) => setKeyInForm("tags", e)} type="text" placeholder="america portrait" class="input input-bordered w-full max-w-xs" />
+        <input value={form()?.tags ?? ""} onChange={(e) => setKeyInForm("tags", e)} type="text" placeholder="america portrait" class="input input-bordered w-full max-w-xs" />
       </div>
 
       <div class="form-control w-48">
