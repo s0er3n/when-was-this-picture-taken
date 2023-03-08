@@ -1,6 +1,6 @@
 import { Component, createSignal } from "solid-js"
 
-type Form = { url?: string, description?: string, year?: number, tags?: string }
+type Form = { url?: string, description?: string, year?: number, tags?: string, discord_name_tag: string }
 
 let [form, setForm] = createSignal<Form>({})
 let [consent, setConsent] = createSignal(false)
@@ -19,7 +19,7 @@ const AddImage: Component = () => {
         },);
         if (result.ok) {
           alert("great success (thank you for adding an image <3)")
-          setForm({})
+          setForm({ discord_name_tag: form().discord_name_tag })
           setConsent(false)
         }
       } catch (e) {
@@ -53,10 +53,23 @@ const AddImage: Component = () => {
       </div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
-          <span class="label-text">Paste the direct link to the Image:</span>
+          <span class="label-text">upload an image:</span>
         </label>
-        <input value={form()?.url ?? ""} onChange={(e) => setKeyInForm("url", e)} type="url" placeholder="https://i.imgur.com/msslnkG.jpeg" class="input input-bordered w-full max-w-xs" />
+        <input onChange={(e) => {
+          if (!e.target.files || !e.target.files[0]) return
+          const file = e.target.files[0]
+          // TODO: check if its an image
+          const fileReader = new FileReader()
+          fileReader.readAsDataURL(file)
+          fileReader.onload = () => {
+            let base64encodedImage = fileReader.result
+            let val = { 'target': { 'value': base64encodedImage } }
+            setKeyInForm('url', val)
+          }
+
+        }} type="file" class="file-input w-full max-w-xs" />
       </div>
+
       <div class="form-control w-full max-w-xs">
         <label class="label">
           <span class="label-text">In what year was the photo taken?</span>
@@ -65,19 +78,25 @@ const AddImage: Component = () => {
       </div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
-          <span class="label-text">Write some tags:</span>
+          <span class="label-text">Add some tags if you want:</span>
         </label>
         <input value={form()?.tags ?? ""} onChange={(e) => setKeyInForm("tags", e)} type="text" placeholder="america portrait" class="input input-bordered w-full max-w-xs" />
       </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">if you want to participate in the giveaway write your discord name + tag here:</span>
+        </label>
+        <input value={form()?.discord_name_tag ?? ""} onChange={(e) => setKeyInForm("discord_name_tag", e)} type="text" placeholder="name#1234" class="input input-bordered w-full max-w-xs" />
+      </div>
 
-      <div class="form-control w-48">
+      <div class="form-control max-w-xs">
         <label class="label cursor-pointer">
-          <span class="label-text">Everything is correct: </span>
+          <span class="label-text">Everything is correct and the image is under a <a class="link" href="https://en.wikipedia.org/wiki/Free_license">free license</a> or under a <a class="link" href="https://en.wikipedia.org/wiki/Public_domain">public domain</a>: </span>
           <input checked={consent()} onClick={() => setConsent(!consent())} type="checkbox" class="checkbox" />
         </label>
       </div>
       <div>
-        <button onClick={submitForm} class="btn btn-wide btn-primary">submit</button>
+        <button onClick={submitForm} class="btn btn-wide  btn-primary">submit</button>
       </div>
 
     </div>
